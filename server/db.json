@@ -114,6 +114,14 @@
         "description": "Plug & play. Easy to use,powered by USB port. No external driver and Power needed. Just plug it into your USB port and the DVD driver will be detected",
         "categoryId": 3,
         "stock": 10
+      },
+      {
+        "id": 9,
+        "name": "SanDisk 1Tb MicroSDXC UHS-I Memory Card with Adapter",
+        "price": 15,
+        "description": "Ideal for Android smartphones and tablets. SanDisk Memory Zone app for easy file management (Download and Installation Required).",
+        "categoryId": 2,
+        "stock": 15
       }
     ],
     "orders": [
