@@ -1,7 +1,10 @@
 <ng-container *ngIf="{ total: total$ | async, quantity: quantity$ | async } as dataCart">
-    <mat-icon>add_shopping_cart</mat-icon>
-        Total: {{ dataCart.total | currency }}
+<!--hasta acá total y quantity existen pero son null, con la directiva ngIf="dataCart.total hacemos que e muestre solo cuando haya tenga otro valor que no sea null" -->
+    <ng-container *ngIf="dataCart.total">
+        <mat-icon>add_shopping_cart</mat-icon>
+         {{ dataCart.total | currency }}
         ({{ dataCart.quantity }})
+    </ng-container>
 </ng-container>
 
     
