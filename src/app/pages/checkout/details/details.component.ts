@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ShoppingCartService } from 'src/app/shared/services/shopping-cart-service';
 
 @Component({
   selector: 'app-details',
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DetailsComponent implements OnInit {
 
-  constructor() { }
+  // como convencion le ponemos el signo de dolar "$" para saber que se trata de un observable
+  total$ = this.shoppingCartSvc.totalAction$;
+  cart$ = this.shoppingCartSvc.cartAction$;
+
+  constructor(private shoppingCartSvc: ShoppingCartService) { }
 
   ngOnInit(): void {
   }
