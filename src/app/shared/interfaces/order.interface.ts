@@ -9,7 +9,7 @@ export interface Order {
     shippingAddress: string;
     city: string;
     date: string;
-    pickUp: boolean;
+    isDelivery: boolean;
     id: number;
 }
 

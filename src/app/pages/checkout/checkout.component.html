@@ -16,8 +16,8 @@
 
         <mat-radio-group class="form__element">
             <p>Choose an option:</p>
-            <mat-radio-button value="pickup" (change)="onPickUpOrDelivery(false)" checked>Pick Up</mat-radio-button>
-            <mat-radio-button class="ms-2" value="delivery" (change)="onPickUpOrDelivery(true)">Delivery</mat-radio-button>
+            <mat-radio-button value="pickup" (change)="onPickUpOrDelivery(false)">Pick Up</mat-radio-button>
+            <mat-radio-button class="ms-2" value="delivery" (change)="onPickUpOrDelivery(true)" checked>Delivery</mat-radio-button>
         </mat-radio-group>
        <!-- si isDelivery es verdadero (en este caso si porque la iniciamos con valor falso), tambien mostrame las tiendas -->
         <ng-container *ngIf="isDelivery; else showStores">

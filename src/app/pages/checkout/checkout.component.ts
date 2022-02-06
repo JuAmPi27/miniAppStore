@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { switchMap, tap } from 'rxjs/operators';
+import { Router, Routes } from '@angular/router';
+import { delay, switchMap, tap } from 'rxjs/operators';
 import { Details, Order } from 'src/app/shared/interfaces/order.interface';
 import { Store } from 'src/app/shared/interfaces/stores.interface';
 import { DataService } from 'src/app/shared/services/data.service';
 import { ShoppingCartService } from 'src/app/shared/services/shopping-cart-service';
 import { Product } from '../products/interfaces/product.interface';
+import { ProductsService } from '../products/services/products.service';
 
 @Component({
   selector: 'app-checkout',
@@ -23,10 +25,16 @@ export class CheckoutComponent implements OnInit {
   };
 
   cart: Product[] = [];
-  isDelivery = false;
+  isDelivery = true;
   stores: Store[] = [];
 
-  constructor(private dataSvc: DataService, private shoppingCartSvc: ShoppingCartService) { }
+  constructor(
+    private dataSvc: DataService, 
+    private shoppingCartSvc: ShoppingCartService,
+    private router:Router,
+    private productSvc: ProductsService) {
+      this.checkIfCartIsEmpty();
+     }
 
   ngOnInit(): void {
     this.getStores();
@@ -43,17 +51,18 @@ export class CheckoutComponent implements OnInit {
     const data: Order = {
       ...formData,
       date: this.getCurrentDay(),
-      pickUp: this.isDelivery,
+      isDelivery: this.isDelivery,
     }
     this.dataSvc.saveOrders(data)
     .pipe( 
       tap(res => console.log("order=>", res)),
-      switchMap((order) => {
-        const orderId = order.id;
+      switchMap(({ id:orderId }) => {
         const details = this.prepareDetails();
         return this.dataSvc.saveDetailsOrder({ details, orderId });
   }),
-  tap(res => console.log("Finish=>", res)),
+  tap(() => this.router.navigate(['/checkout/thank-you-page'])),
+  delay(2000), // ....investigar operador delay......
+  tap(() => this.shoppingCartSvc.resetCart())
     )
   .subscribe();
   }
@@ -70,10 +79,17 @@ export class CheckoutComponent implements OnInit {
     const details: Details[] = [];
     this.cart.forEach( (product: Product) => {
       const {id: productId, name: productName, quantity, stock} = product;
-      details.push({ productId, productName, quantity });
+      const updateStock = (stock - quantity);
+      this.productSvc.updateStock(productId, updateStock)
+      .pipe(
+        tap(() =>  details.push({ productId, productName, quantity }))
+      )
+      .subscribe()
+
     });
     return details;
   }
+     
 
   private getDataCart(): void {
     this.shoppingCartSvc.cartAction$
@@ -81,6 +97,19 @@ export class CheckoutComponent implements OnInit {
       tap((products: Product[]) => this.cart = products)
     )
     .subscribe();
+  }
+
+  checkIfCartIsEmpty(): void {
+    //
+    this.shoppingCartSvc.cartAction$
+    .pipe(
+      tap( (products: Product[]) => {
+        if(Array.isArray(products) && !products.length) {
+          this.router.navigate(['/products']);
+        }
+      })
+    )
+    .subscribe()
   }
 
 }
